@@ -28,7 +28,7 @@ def make_day_files(day_number: str):
                  open(str(Path().cwd() / 'stub.py'), 'r') as stub_file):
                 for line in stub_file.readlines():
                     if line == 'FILEPATH = ""\n':
-                        line = f"FILEPATH = '../data/day_{day_number}_{i}.txt'\n"
+                        line = f"FILEPATH = 'data/day_{day_number}_{i}.txt'\n"
                     new_file.write(line)
                 print('Created file {}'.format(file_path))
 
