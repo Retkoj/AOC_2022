@@ -1,3 +1,4 @@
 data/*.txt
 .idea/
 venv/
+src/day_7/
