@@ -1,5 +1,7 @@
 from argparse import ArgumentParser
+from collections import deque
 from copy import copy
+from math import gcd
 from queue import PriorityQueue
 
 FILEPATH = '../data/day_24_1.txt'
@@ -153,6 +155,31 @@ def a_star(start_node, target_node, all_locations, blizzard_locations_at_t, wall
 
 PATHS = []
 
+
+def dfs(start_node, target_node, all_locations, blizzard_locations_at_t, lcm):
+
+    queue = deque([(0, start_node)])
+
+    seen = set()
+
+    while queue:
+        time, current_location = queue.popleft()
+        time += 1
+
+        possible_moves = get_possible_moves(current_location)
+        open_locations = get_open_locations_at_t(all_locations, blizzard_locations_at_t, time)
+
+        for next_location in possible_moves.intersection(open_locations):
+
+            if next_location == target_node:
+                return time
+
+            key = (next_location, time % lcm)
+            if key not in seen:
+                seen.add(key)
+                queue.append((time, next_location))
+
+
 def walk_paths(current_node, end_node, path, time, all_locations, blizzard_locations_at_t):
     # if end reached, break
     if current_node == end_node:
@@ -182,13 +209,13 @@ def solve(data):
     all_locations = get_all_locations(data)
     width, height = len(data[0]), len(data)
     end_node = (height - 1, width - 2)
-    # walk_paths((0, 1), end_node, [], 0, all_locations, blizzard_locations_at_t)
-    # valid_paths = [p for p in PATHS if p[-1] == end_node]
-    # lengths = [len(p) for p in valid_paths]
-    walls = get_wall_locations(data)
+    lcm = height * width // gcd(height, width)
+
+    # walls = get_wall_locations(data)
     # search_path, a_path, fwd_path = a_star((0, 1), end_node, all_locations, blizzard_locations_at_t, walls)
-    steps = a_star((0, 1), end_node, all_locations, blizzard_locations_at_t, walls)
+    # steps = a_star((0, 1), end_node, all_locations, blizzard_locations_at_t, walls)
     # print(fwd_path)
+    steps = dfs((0, 1), end_node, all_locations, blizzard_locations_at_t, lcm)
     return steps
 
 
